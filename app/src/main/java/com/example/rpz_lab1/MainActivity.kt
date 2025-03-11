@@ -64,7 +64,7 @@ fun BasicCalculator(){
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
 
-        //Перше текстове поле
+        //Перше текстове поле вводу даних
         OutlinedTextField(
             value = num1,
             onValueChange = {if (it.all { char -> char.isDigit() || char.equals('.')}) num1 = it},
@@ -105,7 +105,7 @@ fun BasicCalculator(){
             }
         }
 
-        //друге текстове поле
+        //друге текстове поле вводу даних
         OutlinedTextField(
             value = num2,
             onValueChange = {if (it.all { char -> char.isDigit() || char.equals('.')}) num2 = it},
@@ -123,12 +123,15 @@ fun BasicCalculator(){
                 val number2 = num2.toDoubleOrNull();
                 if (number1 == null || number2 == null){
                     result = "Неправильний ввід даних"
-                } else {
-                    result = when (selectedOption){
-                        "+" -> (number1 + number2).toString()
-                        "-" -> (number1 - number2).toString()
-                        "x" -> (number1 * number2).toString()
-                        "/" -> if (number2 == 0.0) "Ділення на 0 неможливе" else (number1 / number2).toString()
+                } else if (selectedOption == "/" && number2 == 0.0) {
+                    result = "Ділення на 0 неможливе"
+                }
+                else {
+                    result = "Результат: " + when (selectedOption){
+                        "+" -> (number1 + number2)
+                        "-" -> (number1 - number2)
+                        "x" -> (number1 * number2)
+                        "/" -> (number1 / number2)
                         else -> "Невідома помилка"
                     }
                 }
@@ -139,9 +142,11 @@ fun BasicCalculator(){
                 .width(100.dp)
         ) { Text("=") }
 
+        //текстове поле з результатом обрахунків
         result?.let{
             Text(
-                text="Результат: $it",
+                text = it,
+                color = if (it.contains(".")) Color.Unspecified else Color.Red,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(20.dp))
         }
